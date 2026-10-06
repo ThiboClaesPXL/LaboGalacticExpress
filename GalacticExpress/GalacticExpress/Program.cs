@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.Unicode;
 
 namespace GalacticExpress
 {
@@ -7,13 +8,16 @@ namespace GalacticExpress
     {
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
+
             Console.Write("Naam: ");
             string name = Console.ReadLine();
-            name = name.Trim().Replace(" ", "-");
+            name = name.Trim();
+            string BookingCode = name.Replace(" ", "-");
 
             Console.Write("Bestemming: ");
             string destination = Console.ReadLine();
-            destination.Trim();
+            destination = destination.Trim();
 
             Console.Write("Vertrekdatum (yyyy-MM-dd): ");
             if (!DateTime.TryParse(Console.ReadLine(), out DateTime departure))
@@ -21,6 +25,7 @@ namespace GalacticExpress
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Geen geldige datum");
                 Console.ResetColor();
+                return;
             }
 
             Console.Write("Gewicht van bagage (kg): ");
@@ -29,6 +34,7 @@ namespace GalacticExpress
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Geen geldig gewicht voor bagage.");
                 Console.ResetColor();
+                return;
             }
 
             string destinationAbr = destination.Substring(0, 3).ToUpper();
@@ -37,14 +43,14 @@ namespace GalacticExpress
             Console.WriteLine(destination);
             Console.WriteLine(destinationAbr);
 
-            TimeSpan dayToDeparture = departure - DateTime.Today;
+            int dayToDeparture = (departure.Date - DateTime.Today).Days;
             string dayOfWeek = departure.DayOfWeek.ToString();
 
             decimal basePrice = 89.95m;
 
-            basePrice *= (1.75m * weightLugage);
+            basePrice += (1.75m * weightLugage);
 
-            if (dayToDeparture.TotalDays < 7)
+            if (dayToDeparture < 7)
             {
                 basePrice += 12.50m;
             }
@@ -59,9 +65,35 @@ namespace GalacticExpress
             int controlCode = rng.Next(1000, 10000);
 
             StringBuilder sb = new StringBuilder();
-            string result = sb.ToString();
 
-            sb.AppendLine("=====================");
+            sb.AppendLine("========================");
+            sb.AppendLine("GALACTIC EXPRESS");
+            sb.AppendLine("BOARDING PASS");
+            sb.AppendLine("========================");
+
+            sb.AppendLine();
+
+            sb.AppendLine($"Reiziger: {name}");
+            sb.AppendLine($"Bestemming: {destination}");
+            sb.AppendLine($"Code: {destinationAbr}");
+            sb.AppendLine($"Vertrekdatum: {departure:yyyy-MM-dd}");
+            sb.AppendLine($"Vertrekdag: {dayOfWeek}");
+            sb.AppendLine($"Dagen tot vertrek: {dayToDeparture}");
+
+            sb.AppendLine();
+
+            sb.AppendLine($"Gate: {gateNumber}");
+            sb.AppendLine($"stoel: rij {row} - stoel {seat}");
+            sb.AppendLine($"Controlecode: {controlCode}");
+
+            sb.AppendLine();
+
+            sb.AppendLine($"Bagage: {weightLugage} kg");
+            sb.AppendLine($"Totale prijs: {totalPrice:c}");
+            sb.AppendLine($"Boekingscode: {BookingCode}");
+
+            Console.WriteLine(sb);
+
         }
     }
 }
